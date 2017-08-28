@@ -18,7 +18,7 @@ namespace TextFileSplitter
             OpenFileDialog ofd = new OpenFileDialog();
 
             if (ofd.ShowDialog() == DialogResult.OK)
-            {                
+            {
                 path = ofd.FileName;
                 txtFilePath.Text = path;
             }
@@ -26,7 +26,6 @@ namespace TextFileSplitter
 
         private void btnSplit_Click(object sender, EventArgs e)
         {
-            var lines = File.ReadAllLines(path);
             int maxLines = (int)nudMaxLines.Value;
             string[] fileLines = new string[maxLines];
 
@@ -38,28 +37,34 @@ namespace TextFileSplitter
             string oldFilePath = path.Substring(0, path.LastIndexOf("\\") + 1);
 
             int count = 0;
+            int lineCount = 0;
 
-            for (int i = 0, j = 0; i < lines.Length; i++, j++)
+            StreamReader reader = new StreamReader(path);
+
+            string line;
+
+            while ((line = reader.ReadLine()) != null)
             {
-                if (j == maxLines || i == lines.Length - 1)
+                if (lineCount == maxLines)
                 {
-                    j = 0;
+                    lineCount = 0;
                     count++;
-                    
+
                     string newFilePath = string.Format("{0}{1}{2}{3}.{4}", oldFilePath, prefix, count, suffix, extension);
 
                     File.WriteAllLines(newFilePath, fileLines);
                     fileLines = new string[maxLines];
                 }
 
-                fileLines[j] = lines[i];
-            }            
+                fileLines[lineCount] = line.Replace(";", ",");
+                lineCount++;
+            }
 
-            lines = null;
+            reader.Dispose();
             fileLines = null;
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-            MessageBox.Show(string.Format("Finished splitting, created {0} files in {1}", count + 1, oldFilePath), "Finished", MessageBoxButtons.OK);
+            MessageBox.Show(string.Format("Finished splitting, created {0} files in {1}", count, oldFilePath), "Finished", MessageBoxButtons.OK);
         }
-    }
+    }   
 }
