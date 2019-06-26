@@ -55,8 +55,7 @@ namespace TextFileSplitter
                     File.WriteAllLines(newFilePath, fileLines);
                     fileLines = new string[maxLines];
                 }
-
-                fileLines[lineCount] = line.Replace(";", ",");
+                
                 lineCount++;
             }
 
