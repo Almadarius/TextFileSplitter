@@ -34,7 +34,7 @@ namespace TextFileSplitter
 
             int lastPeriod = path.LastIndexOf(".");
             string extension = path.Substring(lastPeriod + 1, path.Length - 1 - lastPeriod);
-            string oldFilePath = path.Substring(0, path.LastIndexOf("\\") + 1);
+            string oldFilePath = path.Substring(0, path.LastIndexOf(@"\") + 1);
 
             int count = 0;
             int lineCount = 0;
@@ -50,7 +50,7 @@ namespace TextFileSplitter
                     lineCount = 0;
                     count++;
 
-                    string newFilePath = string.Format("{0}{1}{2}{3}.{4}", oldFilePath, prefix, count, suffix, extension);
+                    string newFilePath = $"{oldFilePath}{prefix}{count}{suffix}.{extension}";
 
                     File.WriteAllLines(newFilePath, fileLines);
                     fileLines = new string[maxLines];
@@ -63,7 +63,7 @@ namespace TextFileSplitter
             fileLines = null;
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
-            MessageBox.Show(string.Format("Finished splitting, created {0} files in {1}", count, oldFilePath), "Finished", MessageBoxButtons.OK);
+            MessageBox.Show($"Finished splitting, created {count} files in {oldFilePath}", "Finished", MessageBoxButtons.OK);
         }
     }   
 }
